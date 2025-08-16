@@ -178,7 +178,7 @@ function uploadImageBanner($imageLocation){
 
 
 
-function uploadImageFreeImageHost($imageLocation){
+function uploadImageFreeImageHost($imageLocation,$filePath){
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
 	  CURLOPT_URL => 'https://api.imgbb.com/1/upload?expiration=600&key=d4aba98558417ca912f2669f469950c7',
@@ -194,16 +194,15 @@ function uploadImageFreeImageHost($imageLocation){
 	$response = json_decode(curl_exec($curl),true);
 	curl_close($curl);
 	if( isset($response["success"]) && $response["success"] == true ){
-		file_put_contents("../../../logos/{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["image"]["url"]));
-		file_put_contents("../../../logos/m{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["thumb"]["url"]));
-		file_put_contents("../../../logos/b{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["thumb"]["url"]));
+		file_put_contents("../logos/{$filePath}/{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["image"]["url"]));
+		file_put_contents("../logos/{$filePath}/thumb_{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["thumb"]["url"]));
 		return "{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}"; 
 	}else{
 		return "";
 	}
 }
 
-function uploadImageBannerFreeImageHost($imageLocation){
+function uploadImageFreeImageHostAPI($imageLocation,$filePath){
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
 	  CURLOPT_URL => 'https://api.imgbb.com/1/upload?expiration=600&key=d4aba98558417ca912f2669f469950c7',
@@ -219,7 +218,8 @@ function uploadImageBannerFreeImageHost($imageLocation){
 	$response = json_decode(curl_exec($curl),true);
 	curl_close($curl);
 	if( isset($response["success"]) && $response["success"] == true ){
-		file_put_contents("../logos/{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["image"]["url"]));
+		file_put_contents("../../logos/{$filePath}/{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["image"]["url"]));
+		file_put_contents("../../logos/{$filePath}/thumb_{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}", file_get_contents($response["data"]["thumb"]["url"]));
 		return "{$response["data"]["id"]}.{$response["data"]["image"]["extension"]}"; 
 	}else{
 		return "";

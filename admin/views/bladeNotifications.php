@@ -1,13 +1,13 @@
 <?php 
 if( isset($_POST["title"]) ){
     if( is_uploaded_file($_FILES['image']['tmp_name']) ){
-        $_POST["image"] = uploadImageBannerFreeImageHost($_FILES['image']['tmp_name']);
+        $_POST["image"] = uploadImageFreeImageHost($_FILES['image']['tmp_name'],"notifications");
     }else{
         $_POST["image"] = "";
     }
     $curl = curl_init();
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://coeoapp.com/requests/store/?endpoint=FirebaseNotification&language=en&action=sendNotification',
+        CURLOPT_URL => 'https://tahadi.createkuwait.com/requests/store/?endpoint=FirebaseNotification&language=en&action=sendNotification',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,

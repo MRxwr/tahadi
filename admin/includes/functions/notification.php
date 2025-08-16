@@ -239,4 +239,32 @@ function whatsappUltraMsg($order){
 		$data = array();
 	}
 }
+
+function whatsappUltraMsgOTP($userId, $otp){
+	GLOBAL $settingsTitle, $settingslogo;
+	if( $settings = selectDB("settings","`id` = '1'") && $user = selectDB("users", "`id` = '{$userId}'") ){
+		$token = $settings[0]["whatsappToken"];
+		$instanceId = $settings[0]["whatsappInstance"];
+		$to = $user[0]["phone"];
+		$name = "{$user[0]["fname"]} {$user[0]["lname"]}";
+		$image = "../../logos/misc/{$settingslogo}";
+		$caption = urlencode("Hello {$name}, Here is your\nOTP: {$otp} \n\nBest Regards, \n{$settingsTitle}.\n\nThis is an automated message courtesy of createkuwait.com");
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => "https://api.ultramsg.com/{$instanceId}/messages/image?token={$token}&to=+{$to}&image={$image}&caption={$caption}",
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+		));
+		$response = curl_exec($curl);
+		curl_close($curl);
+		return $response;
+	}else{
+		$data = array();
+	}
+}
 ?>

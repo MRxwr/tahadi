@@ -23,7 +23,7 @@ if( isset($_POST["arTitle"]) ){
 	unset($_POST["update"]);
 	if ( $id == 0 ){
         if( is_uploaded_file($_FILES['icon']['tmp_name']) ){
-			$_POST["icon"] = uploadImageBannerFreeImageHost($_FILES['icon']['tmp_name']);
+			$_POST["icon"] = uploadImageFreeImageHost($_FILES['icon']['tmp_name'],"payment_methods");
 		}else{
 			$_POST["icon"] = "";
 		}
@@ -38,7 +38,7 @@ if( isset($_POST["arTitle"]) ){
 		}
 	}else{
         if( is_uploaded_file($_FILES['icon']['tmp_name']) ){
-			$_POST["icon"] = uploadImageBannerFreeImageHost($_FILES['icon']['tmp_name']);
+			$_POST["icon"] = uploadImageFreeImageHost($_FILES['icon']['tmp_name'],"payment_methods");
 		}else{
 			$icon = selectDB("p_methods","`id` = '{$id}'");
 			$_POST["icon"] = $icon[0]["icon"];

@@ -29,7 +29,7 @@ if( isset($_POST["title"]) ){
 	unset($_POST["update"]);
 	if ( $id == 0 ){
 		if (is_uploaded_file($_FILES['image']['tmp_name'])) {
-            $_POST["image"] = uploadImageBannerFreeImageHost($_FILES['image']['tmp_name']);
+            $_POST["image"] = uploadImageFreeImageHost($_FILES['image']['tmp_name'],"banners");
 		}else{
             $_POST["image"] = "";
         }
@@ -45,7 +45,7 @@ if( isset($_POST["title"]) ){
 		}
 	}else{
 		if (is_uploaded_file($_FILES['image']['tmp_name'])) {
-            $_POST["image"] = uploadImageBannerFreeImageHost($_FILES['image']['tmp_name']);
+            $_POST["image"] = uploadImageFreeImageHost($_FILES['image']['tmp_name'],"banners");
 		}else{
             $imageurl = selectDB("banners", "`id` = '{$id}'");
             $_POST["image"] = $imageurl[0]["image"];

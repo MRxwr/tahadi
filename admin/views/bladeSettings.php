@@ -53,11 +53,11 @@ if (isset($_POST["title"])) {
 		"email" => $_POST["email"]
 	);
 	if (is_uploaded_file($_FILES['bgImage']['tmp_name'])) {
-		$filenewname = uploadImageBannerFreeImageHost($_FILES['bgImage']['tmp_name']);
+		$filenewname = uploadImageFreeImageHost($_FILES['bgImage']['tmp_name'],"misc");
 		$updateSettings["bgImage"] = $filenewname;
 	}
 	if (is_uploaded_file($_FILES['logo']['tmp_name'])) {
-		$filenewname = uploadImageBannerFreeImageHost($_FILES['logo']['tmp_name']);
+		$filenewname = uploadImageFreeImageHost($_FILES['logo']['tmp_name'],"misc");
 		$updateSettings["logo"] = $filenewname;
 	}
 	updateDB("settings", $updateSettings, "`id` = '1'");

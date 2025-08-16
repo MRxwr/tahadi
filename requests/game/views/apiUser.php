@@ -57,7 +57,7 @@ if( isset($_GET["action"]) && !empty($_GET["action"]) ){
             updateDB("users",array("keepMeAlive" => "{$userToken}","firebaseToken" => "{$data["firebaseToken"]}"),"`id` = '{$user[0]["id"]}'");
             $curl = curl_init();
                 curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://coeoapp.com/requests/store/index.php?a=FirebaseNotification&action=register',
+                CURLOPT_URL => 'https://tahadi.createkuwait.com/requests/store/index.php?a=FirebaseNotification&action=register',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -97,7 +97,7 @@ if( isset($_GET["action"]) && !empty($_GET["action"]) ){
                             updateDB("users",array("keepMeAlive" => "{$userToken}","firebaseToken" => "{$data["firebaseToken"]}"),"`id` = '{$user[0]["id"]}'");
                             $curl = curl_init();
                                 curl_setopt_array($curl, array(
-                                CURLOPT_URL => 'https://coeoapp.com/requests/store/index.php?a=FirebaseNotification&action=register',
+                                CURLOPT_URL => 'https://tahadi.createkuwait.com/requests/store/index.php?a=FirebaseNotification&action=register',
                                 CURLOPT_RETURNTRANSFER => true,
                                 CURLOPT_ENCODING => '',
                                 CURLOPT_MAXREDIRS => 10,
@@ -131,7 +131,7 @@ if( isset($_GET["action"]) && !empty($_GET["action"]) ){
                 updateDB("users",array("keepMeAlive" => "{$userToken}","firebaseToken" => "{$data["firebaseToken"]}"),"`id` = '{$user[0]["id"]}'");
                 $curl = curl_init();
                     curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://coeoapp.com/requests/store/index.php?a=FirebaseNotification&action=register',
+                    CURLOPT_URL => 'https://tahadi.createkuwait.com/requests/store/index.php?a=FirebaseNotification&action=register',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -154,7 +154,7 @@ if( isset($_GET["action"]) && !empty($_GET["action"]) ){
                 "registrationType" => 3,
                 "phone" => "",
                 "password" => sha1("coeo1234"),
-                "email" => "guest-".date("YmdHis").time()."@coeoapp.com",
+                "email" => "guest-".date("YmdHis").time()."@tahadi.createkuwait.com",
                 "fName" => "guest-".date("YmdHis").time(),
                 "lName" => "",
                 "countryCode" => "965",
@@ -162,7 +162,7 @@ if( isset($_GET["action"]) && !empty($_GET["action"]) ){
             if( insertDB("users",$guestData) ){
                 $curl = curl_init();
                     curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://coeoapp.com/requests/store/index.php?a=FirebaseNotification&action=register',
+                    CURLOPT_URL => 'https://tahadi.createkuwait.com/requests/store/index.php?a=FirebaseNotification&action=register',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -254,7 +254,7 @@ if( isset($_GET["action"]) && !empty($_GET["action"]) ){
                 echo outputError(array("msg" => errorResponse($lang,"Please enter your country code","يجب أدخال رمز البلد")));die();
             }
             if( isset($_FILES["image"]['tmp_name']) && is_uploaded_file($_FILES["image"]['tmp_name']) ){
-                $data["image"] = uploadProfileImage($_FILES["image"]['tmp_name']);
+                $data["image"] = uploadImageFreeImageHostAPI($_FILES["image"]['tmp_name'],"profiles");
                 if( empty($data["image"]) ){
                     echo outputError(array("msg" => errorResponse($lang,"Image upload failed","فشل تحميل الصورة")));die();
                 }else{
@@ -300,10 +300,35 @@ if( isset($_GET["action"]) && !empty($_GET["action"]) ){
         }else{
             echo outputError(array("msg" => errorResponse($lang,"Not valid token","الكود غير صالح")));die();
         }
+    }elseif( $_GET["action"] == "getOTP" ){
+        if( $user = selectDBNew("users",[$token],"`keepMeAlive` = ?","") ){
+            $otp = rand(100000, 999999);
+            if( updateDB("users",array("otp" => $otp),"`id` = '{$user[0]["id"]}'") ){
+                whatsappUltraMsgOTP($user[0]["id"], $otp);
+                echo outputData(array("msg" => errorResponse($lang,"OTP sent successfully","تم ارسال OTP بنجاح")));die();
+            }else{
+                echo outputError(array("msg" => errorResponse($lang,"Not valid token","الكود غير صالح")));die();
+            }
+        }else{
+            echo outputError(array("msg" => errorResponse($lang,"Not valid token","الكود غير صالح")));die();
+        }
+    }elseif( $_GET["action"] == "verifyOTP" ){
+        if( !isset($_POST["otp"]) || empty($_POST["otp"]) ){
+            echo outputError(array("msg" => errorResponse($lang,"OTP is required","OTP مطلوب")));die();
+        }
+        if( $user = selectDBNew("users",[$token],"`keepMeAlive` = ?","") ){
+            if( $user[0]["otp"] == $_POST["otp"] ){
+                updateDB("users",array("otp" => "", "isVerified" => 1),"`id` = '{$user[0]["id"]}'");
+                echo outputData(array("msg" => errorResponse($lang,"OTP verified successfully","تم التحقق من OTP بنجاح")));die();
+            }else{
+                echo outputError(array("msg" => errorResponse($lang,"Invalid OTP","OTP غير صالح")));die();
+            }
+        }else{
+            echo outputError(array("msg" => errorResponse($lang,"Not valid token","الكود غير صالح")));die();
+
+        }
     }else{
         echo outputError(array("msg" => "404 action not available"));die();
     }
-}else{
-    echo outputError(array("msg" => "404 action not available"));die();
 }
 ?>

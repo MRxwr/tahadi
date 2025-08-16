@@ -30,8 +30,8 @@ if( isset($_POST["arTitle"]) ){
 	if ( $id == 0 ){
 		if (is_uploaded_file($_FILES['imageurl']['tmp_name'])) {
 			$ext = pathinfo($_FILES['imageurl']['name'], PATHINFO_EXTENSION);
-			$_POST["imageurl"] = uploadImageBannerFreeImageHost($_FILES['imageurl']['tmp_name']);
-			$_POST["imageurl2"] = uploadImageBannerFreeImageHost($_FILES['imageurl']['tmp_name']);
+			$_POST["imageurl"] = uploadImageFreeImageHost($_FILES['imageurl']['tmp_name'],"categories");
+			$_POST["imageurl2"] = uploadImageFreeImageHost($_FILES['imageurl']['tmp_name'],"categories");
 		} else {
 			$_POST["imageurl"] = "";
 			$_POST["imageurl2"] = "";
@@ -39,7 +39,7 @@ if( isset($_POST["arTitle"]) ){
 		
 		if (is_uploaded_file($_FILES['header']['tmp_name'])) {
 			$ext = pathinfo($_FILES['header']['name'], PATHINFO_EXTENSION);
-			$_POST["header"] = uploadImageBannerFreeImageHost($_FILES['header']['tmp_name']);
+			$_POST["header"] = uploadImageFreeImageHost($_FILES['header']['tmp_name'],"categories");
 		} else {
 			$_POST["header"] = "";
 		}
@@ -57,8 +57,8 @@ if( isset($_POST["arTitle"]) ){
 	}else{
 		if (is_uploaded_file($_FILES['imageurl']['tmp_name'])) {
 			$ext = pathinfo($_FILES['imageurl']['name'], PATHINFO_EXTENSION);
-			$_POST["imageurl"] = uploadImageBannerFreeImageHost($_FILES['imageurl']['tmp_name']);
-			$_POST["imageurl2"] = uploadImageBannerFreeImageHost($_FILES['imageurl']['tmp_name']);
+			$_POST["imageurl"] = uploadImageFreeImageHost($_FILES['imageurl']['tmp_name'],"categories");
+			$_POST["imageurl2"] = uploadImageFreeImageHost($_FILES['imageurl']['tmp_name'],"categories");
 		} else {
 			unset($_POST["imageurl"]);
 			unset($_POST["imageurl2"]);
@@ -66,7 +66,7 @@ if( isset($_POST["arTitle"]) ){
 		
 		if (is_uploaded_file($_FILES['header']['tmp_name'])) {
 			$ext = pathinfo($_FILES['header']['name'], PATHINFO_EXTENSION);
-			$_POST["header"] = uploadImageBannerFreeImageHost($_FILES['header']['tmp_name']);
+			$_POST["header"] = uploadImageFreeImageHost($_FILES['header']['tmp_name'],"categories");
 		} else {
 			unset($_POST["header"]);
 		}

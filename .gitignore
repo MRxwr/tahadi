@@ -1,12 +1,1 @@
-
-logos/bVa3jeh2.png
-logos/mVa3jeh2.png
-logos/Va3jeh2.png
 admin/includes/config.php
-
-# API Documentation (exclude from repository)
-API_DOCUMENTATION.md
- 
-# Internal audit (exclude from repository)
-docs/INTERNAL_AUDIT.md
-docs/FRONTEND_CHANGELOG_LOCAL.md

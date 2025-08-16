@@ -1,0 +1,105 @@
+<?php
+if( isset($_GET["newId"]) && !empty($_GET["newId"]) ){
+	if( selectDB("products","`id` = '{$_GET["newId"]}' AND `recent` = '0'") ){
+		updateDB("products",array("recent"=>1),"`id` = '{$_GET["newId"]}'");
+	}else{
+		updateDB("products",array("recent"=>0),"`id` = '{$_GET["newId"]}'");
+	}
+	header("LOCATION: ?v=Product");
+}
+if( isset($_GET["bestId"]) && !empty($_GET["bestId"]) ){
+	if( selectDB("products","`id` = '{$_GET["bestId"]}' AND `bestSeller` = '0'") ){
+		updateDB("products",array("bestSeller"=>1),"`id` = '{$_GET["bestId"]}'");
+	}else{
+		updateDB("products",array("bestSeller"=>0),"`id` = '{$_GET["bestId"]}'");
+	}
+	header("LOCATION: ?v=Product");
+}
+if ( isset($_POST["subId"]) ){
+	for ( $i = 0 ; $i < sizeof($_POST["subId"]) ; $i++ ){
+		updateDB("products",array("subId"=>$_POST["subId"][$i]),"`id`= '{$_POST["ids"][$i]}'");
+	}
+}
+
+?>
+<form action="" method="POST" enctype="multipart/form-data">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="panel panel-default card-view">
+			<div class="panel-heading">
+			<div class="pull-left" style="width: 100%;">
+				<div class="row">
+					<div class="col-xs-6">
+						<h6 class="panel-title txt-dark"><?php echo direction("Products List","قائمة المنتجات") ?></h6>
+					</div>
+					<div class="col-xs-6 text-right">
+						<a href="?v=ProductAction" class="btn btn-primary"><?php echo direction("Add Product","اضافة منتج") ?></a>
+					</div>
+				</div>
+			</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="panel-wrapper collapse in">
+			<div class="panel-body row">
+			<div class="table-wrap">
+			<div class="table-responsive">
+			<table class="table display responsive product-overview mb-30" id="AjaxTable" <?php // id="myAjaxTable" ?>>
+				<thead>
+					<tr>
+					<th>#</th>
+					<th><?php echo direction("Order","ترتيب") ?></th>
+					<th><?php echo direction("Image","صورة") ?></th>
+					<th><?php echo direction("English Title","العنوان بالإنجليزي") ?></th>
+					<th><?php echo direction("Arabic Title","العنوان بالعربي") ?></th>
+					<th><?php echo direction("Action","الخيارات") ?></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			</div>
+			</div>	
+			</div>	
+			</div>
+			</div>
+		</div>
+	</div>
+	<input type="submit" value="submit" />
+</form>
+
+<script>
+	$(document).ready(function(){
+   $('#AjaxTable').DataTable({
+      'processing': true,
+      'serverSide': true,
+      "pageLength": 10,
+      'serverMethod': 'post',
+      'ajax': {
+          'url':'../api/getProducts.php?v=<?php echo $_GET["v"] ?>',
+          'dataSrc': function(json) {
+              console.log('Response:', json); // Log the response
+              if (!json.aaData) {
+                  console.error('Invalid JSON response:', json);
+                  return [];
+              }
+              return json.aaData; // Map aaData to data
+          },
+          'error': function(xhr, error, thrown) {
+              console.error('Error fetching data:', error, thrown);
+              console.error('Response:', xhr.responseText);
+          }
+      },
+      'order': [[0, 'desc']],
+      'columns': [
+         { data: '#' },
+         { data: 'order' },
+         { data: 'image' },
+         { data: 'english' },
+         { data: 'arabic' },
+         { data: 'action' },
+      ]
+   });
+});
+// add seach function to the data table
+
+</script>

@@ -1,0 +1,138 @@
+<?php 
+if( isset($_POST["attributeId"]) ){
+	for( $i = 0; $i < sizeof($_POST["attributeId"]); $i++ ){
+		if( updateDB("attributes_products", array("quantity" => $_POST["quantity"][$i], "price" => $_POST["price"][$i]) , "`id` = '{$_POST["attributeId"][$i]}'") ){
+		}
+	}
+	header("LOCATION: ?v=Inventory&id={$_GET["id"]}");die();
+}
+?>
+<div class="row">		
+<div class="col-sm-12">
+<div class="panel panel-default card-view">
+<div class="panel-heading">
+<div class="pull-left">
+	<h6 class="panel-title txt-dark"><?php echo direction("Select Category","إختر قسم") ?></h6>
+</div>
+	<div class="clearfix"></div>
+</div>
+<div class="panel-wrapper collapse in">
+<div class="panel-body">
+	<form class="" method="GET" action="" enctype="multipart/form-data">
+		<div class="row m-0">
+			<div class="col-md-6">
+				<label><?php echo direction("Categories","الأقسام") ?></label>
+				<input type="hidden" name="v" value="<?php echo $_GET["v"] ?>">
+				<select name="id" class="form-control" onchange="this.form.submit()">
+					<?php
+					if( !isset($_GET["id"]) ){
+						echo "<option selected disabled value='0'>".direction("Please select a category","الرجاء إختيار قسم")."</option>";
+					}
+					if( $categories = selectDB("categories","`status` = '0'") ){
+						for( $i = 0; $i < sizeof($categories); $i++ ){
+							$categoryTitle = direction($categories[$i]["enTitle"],$categories[$i]["arTitle"]);
+							if( $_GET["id"] == $categories[$i]["id"] ){
+								echo "<option selected value='{$categories[$i]["id"]}'>{$categoryTitle}</option>";
+							}else{
+								echo "<option value='{$categories[$i]["id"]}'>{$categoryTitle}</option>";
+							}
+						}
+					}
+					?>
+				</select>
+			</div>
+		</div>
+	</form>
+</div>
+</div>
+</div>
+</div>
+<?php
+if( isset($_GET["id"]) && !empty($_GET["id"]) ){
+	$listOfProducts = selectDB("category_products","`categoryId` = '{$_GET["id"]}'");
+?>
+				<!-- Bordered Table -->
+<div class="col-sm-12">
+<div class="panel panel-default card-view">
+<div class="panel-heading">
+<div class="pull-left">
+<h6 class="panel-title txt-dark"><?php echo direction("List of Items","قائمة المنتجات") ?></h6>
+</div>
+<div class="clearfix"></div>
+</div>
+<div class="panel-wrapper collapse in">
+<div class="panel-body">
+<div class="table-wrap mt-40">
+<div class="table-responsive">
+<form method="post" action="">
+	<table class="table display responsive product-overview mb-30" id="myTable">
+		<thead>
+			<tr>
+				<th><?php echo direction("Logo","الصورة") ?></th>
+				<th><?php echo direction("Title","الإسم") ?></th>
+				<th><?php echo direction("Quantity","الكمية") ?></th>
+				<th><?php echo direction("Cost","التكلفه") ?></th>
+				<th><?php echo direction("Price","السعر") ?></th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php 
+			for( $i = 0; $i < sizeof($listOfProducts); $i++ ){
+				if( $product = selectDB("products","`id` = '{$listOfProducts[$i]["productId"]}' AND `hidden` != '2' ") ){
+					$produtTitle = direction($product[0]["enTitle"], $product[0]["arTitle"]);
+					$image = selectDB("images","`productId` = '{$product[0]["id"]}' ORDER BY `id` ASC LIMIT 1");
+					$attributes = selectDB("attributes_products","`productId` = '{$product[0]["id"]}'");
+					for( $y = 0; $y < sizeof($attributes); $y++ ){
+						$attributeTitle = direction($attributes[$y]["enTitle"], $attributes[$y]["arTitle"]);
+						?>
+					<tr>
+						<td><img src='../logos/<?php echo "b{$image[0]["imageurl"]}" ?>' style="width:50px;height:50px"></td>
+						<td><a target="_blank" class="titleLink" data-link="<?php echo "{$produtTitle} {$attributeTitle}" ?>"><?php echo "{$produtTitle} {$attributeTitle}" ?></a></td>
+						<td>
+							<input type="number" name="quantity[]" value="<?php echo $attributes[$y]["quantity"] ?>" class="form-control">
+						</td>
+						<td><?php echo numTo3Float($attributes[$y]["cost"]) ?></td>
+						<td>
+							<input type="number" min="0" step="any" name="price[]" value="<?php echo numTo3Float($attributes[$y]["price"]) ?>" class="form-control" style="width:100px">
+							<input type="hidden" name="attributeId[]" value="<?php echo $attributes[$y]["id"] ?>">
+						</td>
+					</tr>
+					<?php
+					}
+				}
+			}
+		?>
+		</tbody>
+	</table>
+	<input type="submit" value="Update" class="btn btn-primary">
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<?php
+}
+?>
+</div>
+<script>
+	$(document).ready(function () {
+    $(".titleLink").on("click", function (e) {
+		var link = $(this).attr("data-link");
+		// replace spaces with -
+		var link2 = link.replace(/\s/g, "-");
+		var link3 = link2.slice(0, -1);
+        e.preventDefault(); // Prevent default action if it's a link
+
+        // Open the first website
+        window.open("https://www.google.com/search?q="+link+" kuwait", "_blank");
+
+        // Open the second website
+        window.open("https://babapckw.com/product/"+link2, "_blank");
+
+		// Open the second website
+        window.open("https://www.nextstore.com.kw/"+link3+".html", "_blank");
+    });
+});
+</script>
